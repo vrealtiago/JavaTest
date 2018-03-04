@@ -72,13 +72,9 @@ public class LibraryReportingService {
 			}
 		}
 	}
+
 	public void addOutputService(OutputService outputService) {
 		outputServices.add(outputService);
 	}
-	
-	public void removeOutputService(OutputService outputService) {
-		outputServices.remove(outputService);
-	}
-	
 
 }

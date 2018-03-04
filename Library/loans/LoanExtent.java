@@ -19,15 +19,15 @@ public class LoanExtent {
 	private LoanExtent() {
 		try {
 			//Initialise and register resources currently on loan
-			createLoan(ResourceExtent.INSTANCE.findByPrimaryKey("R1"), (Student)SubscriberExtent.INSTANCE.findByPrimaryKey("S3"),new GregorianCalendar(2004, 00, 20));
-			createLoan(ResourceExtent.INSTANCE.findByPrimaryKey("R5"), (Student)SubscriberExtent.INSTANCE.findByPrimaryKey("S3"),new GregorianCalendar(2004, 00, 01));
-			createLoan(ResourceExtent.INSTANCE.findByPrimaryKey("R4"), (Pensioner)SubscriberExtent.INSTANCE.findByPrimaryKey("S1"),new GregorianCalendar(2004, 00, 01));
+			createLoan(ResourceExtent.INSTANCE.findByPrimaryKey("R1"), SubscriberExtent.INSTANCE.findByPrimaryKey("S3"),new GregorianCalendar(2004, 00, 20));
+			createLoan(ResourceExtent.INSTANCE.findByPrimaryKey("R5"), SubscriberExtent.INSTANCE.findByPrimaryKey("S3"),new GregorianCalendar(2004, 00, 01));
+			createLoan(ResourceExtent.INSTANCE.findByPrimaryKey("R4"), SubscriberExtent.INSTANCE.findByPrimaryKey("S1"),new GregorianCalendar(2004, 00, 01));
 		} 
 		catch (Exception e) {
 			e.printStackTrace();
 		} 
 	}
-	public Loan createLoan(Resource resource, Object subscriber, GregorianCalendar gregorianCalendar) throws Exception {
+	public Loan createLoan(Resource resource, Subscribers subscriber, GregorianCalendar gregorianCalendar) throws Exception {
 		if ( resource == null ) {
 			throw new NullPointerException("Resource parameter can not be null");
 		}
@@ -35,13 +35,8 @@ public class LoanExtent {
 			throw new NullPointerException("Subscriber parameter can not be null");
 		}
 		Loan loan = new Loan();
-		resource.setLoan(loan);
-		if ( subscriber instanceof Student ) {
-			((Student)subscriber).addLoan(loan);
-		}
-		else if ( subscriber instanceof Pensioner ) {
-			((Pensioner)subscriber).addLoan(loan);
-		}
+		resource.addLoad(loan);
+		subscriber.addLoan(loan);
 		loan.setResource(resource);
 		loan.setSubscriber(subscriber);
 		loan.setLoanDate(gregorianCalendar);

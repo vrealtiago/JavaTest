@@ -13,27 +13,26 @@ public class SubscriberExtent {
 	static int idCounter = 0;
 	public static SubscriberExtent INSTANCE = new SubscriberExtent();
 	
-	private SubscriberExtent() {
-		// Initialise and register library subscribers
-		createPensioner(new Pensioner("Bill"));
-		createPensioner(new Pensioner("Elsie"));
-		createStudent(new Student("Zach", "De Montfort University"));
-		createStudent(new Student("Amelia", "Christchurch College"));
-	}
-	public void createPensioner(Pensioner pensioner) {
-		pensioner.setId(getNextId());
-		subscribers.put(pensioner.getId(), pensioner);
-	}
-	public void createStudent(Student student) {
-		student.setId(getNextId());
-		subscribers.put(student.getId(), student);
-	}
 	public static String getNextId() {
 		return "S" + (idCounter++);
 	}
-	public Object findByPrimaryKey(String id) {
-		return subscribers.get(id);
+	
+	private SubscriberExtent() {
+		// Initialise and register library subscribers
+		createSubscriber(new Pensioner(getNextId(), "Bill"));
+		createSubscriber(new Pensioner(getNextId(), "Elsie"));
+		createSubscriber(new Student(getNextId(), "Zach", "De Montfort University"));
+		createSubscriber(new Student(getNextId(), "Amelia", "Christchurch College"));
 	}
+	
+	public void createSubscriber(Subscribers subs) {
+		subscribers.put(subs.getId(), subs);
+	}
+	
+	public Subscribers findByPrimaryKey(String id) {
+		return (Subscribers) subscribers.get(id);
+	}
+
 	public Collection getSubscribers() {
 		return subscribers.values();
 	}
