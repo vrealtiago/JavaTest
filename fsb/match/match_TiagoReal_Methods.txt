@@ -1,0 +1,98 @@
+-Class ClientImpl
+
+//Method for add the event on the list.
+	public void addEvent(Event event) {
+		eventList.add(event);
+	}
+
+// Method with stream and lambda of java 8 , filter to find the id and removing the old event and add new one
+	public void eventCompleted(Integer id) {
+		Optional<Event> optEvent = eventList.stream().filter(e -> e.getId().equals(id)).findFirst();
+		Event event = optEvent.get();
+		Event newEvent = new Event(event.getId(), event.getName(), event.getSubCategory(), event.getMarketRefTypes(), true);
+		eventList.remove(event);
+		eventList.add(newEvent);
+	}
+	
+// Method with stream and lambda of java 8 , filter to find the id and attach a new marketRef
+	public void attachMarketRefTypeToEvent(Integer id, MarketRefType marketRefType) {
+		Optional<Event> optEvent = eventList.stream().filter(e -> e.getId().equals(id)).findFirst();
+		Event event = optEvent.get();
+		event.getMarketRefTypes().add(marketRefType);
+	}
+
+// Method with stream and lambda of java 8 , filter to find the id and remove the marketRef
+	public void removeMarketRefTypeFromEvent(Integer id, MarketRefType marketRefType) {
+		Optional<Event> optEvent = eventList.stream().filter(e -> e.getId().equals(id)).findFirst();
+		Event event = optEvent.get();
+		event.getMarketRefTypes().remove(marketRefType);
+	}
+
+// Method with stream and lambda of java 8 , filter to find the category, subcategory  and verifing the marketRefName to return the future events
+	public Collection<String> futureEventNamesCollection(String cat, String subcat, String marketRefName) {
+		return eventList.stream()
+				.filter(e -> e.getSubCategory().getCategory().getRef().equals(cat)
+						&& e.getSubCategory().getRef().equals(subcat) && e.verifyMarketRefType(marketRefName))
+				.map(e -> {return e.getName();})
+				.collect(Collectors.toList());
+	}
+
+// Method for show the full structure of the event, used StringBuilder for use less memory on the system
+	public String dumpFullStructure() {
+		StringBuilder eventInfo = new StringBuilder();
+		for (Event event : eventList) {
+			eventInfo.append("Name: " + event.getName() + "\n");
+			eventInfo.append("Category: " + event.getSubCategory().getCategory().getRef() + "\n");
+			eventInfo.append("SubCategory: " + event.getSubCategory().getRef() + "\n");
+			eventInfo.append("RefType: " + event.getMarketRefTypes().iterator().next().getMarketRefName() + "\n");
+			eventInfo.append("Is Completed: " + event.getCompleted() + "\n\n");
+		}
+		return eventInfo.toString();
+	}
+
+--------------------------------------------
+
+-Class Event
+
+//Method with stream and lambda of java 8, filter to get the name of marketRef
+public boolean verifyMarketRefType(String nameMarket){
+    	Optional<MarketRefType> optMarketRefType = marketRefTypes.stream().filter(m -> m.getMarketRefName().equals(nameMarket)).findFirst();
+    	return optMarketRefType.isPresent();
+    }
+	
+ -------------------------------------------
+ 
+-Class MarketRefType
+
+//override the hashCode and the equals for comparete the values of marketRef
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((marketRefId == null) ? 0 : marketRefId.hashCode());
+		result = prime * result + ((marketRefName == null) ? 0 : marketRefName.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		MarketRefType other = (MarketRefType) obj;
+		if (marketRefId == null) {
+			if (other.marketRefId != null)
+				return false;
+		} else if (!marketRefId.equals(other.marketRefId))
+			return false;
+		if (marketRefName == null) {
+			if (other.marketRefName != null)
+				return false;
+		} else if (!marketRefName.equals(other.marketRefName))
+			return false;
+		return true;
+	}
+ -------------------------------------------

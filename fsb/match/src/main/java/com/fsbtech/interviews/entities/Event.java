@@ -2,6 +2,7 @@ package com.fsbtech.interviews.entities;
 
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.Optional;
 
 public class Event implements Serializable
 {
@@ -39,4 +40,14 @@ public class Event implements Serializable
     { 
 	return completed; 
     }
+    
+    public Collection<MarketRefType> getMarketRefTypes() {
+		return marketRefTypes;
+	}
+    
+    public boolean verifyMarketRefType(String nameMarket){
+    	Optional<MarketRefType> optMarketRefType = marketRefTypes.stream().filter(m -> m.getMarketRefName().equals(nameMarket)).findFirst();
+    	return optMarketRefType.isPresent();
+    }
+    
 }
